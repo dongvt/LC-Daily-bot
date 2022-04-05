@@ -5,7 +5,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const getDailyChallenge = require('./leetCodeAPI');
 const listeningServer = require('./server');
 
-let chanelId = null;
+let channelId = null;
 
 const commands = [
   new SlashCommandBuilder().setName('ping').setDescription('Replies with pong!'),
@@ -39,26 +39,33 @@ client.on('interactionCreate', async interaction => {
 
     await interaction.deferReply()
     channelId = interaction.channelId;
+    const response = await getDailyChallenge();
     dailyTrigger.start();
-    await interaction.editReply('Done');
+    await interaction.editReply('The daily challenge will be posted at 0:30 UTC');
   }
   if (interaction.commandName === 'lc_stop') {
-
     await interaction.deferReply()
     dailyTrigger.stop();
-    await interaction.editReply('Done');
+    await interaction.editReply('The daily challenge will not longer be posted here');
   }
 });
 
 //Cron temp
-const CronJob = require('cron').CronJob;
+ var cron = require('node-cron');
 
-const dailyTrigger = new CronJob('* 30 18 * * *', async function() {
-  const channel = client.channels.cache.get(channelId);
-	const response = await getDailyChallenge();
-  channel.send('https://leetcode.com' + response.link);
-});
-
+ const dailyTrigger = cron.schedule('30 18 * * *', async () => {
+    const channel = client.channels.cache.get(channelId);
+    const response = await getDailyChallenge();
+    const question = response.question;
+    const msg = `The today's challenge is:\n
+${question.title} [${question.difficulty}] Acceptance: ${question.acRate.toFixed(2)}\n
+https://leetcode.com${response.link}
+`;
+    channel.send(msg);
+ }, {
+   scheduled: false,
+   timezone: "America/Boise"
+ });
 
 
 //Run server listener and bot listener
