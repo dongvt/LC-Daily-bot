@@ -79,5 +79,6 @@ client.on('interactionCreate', async interaction => {
 
 console.log()
 //Run server listener and bot listener
-listeningServer();
+
 client.login(process.env.TOKEN);
+listeningServer();
