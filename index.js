@@ -1,3 +1,5 @@
+"use strict";
+require('dotenv').config()
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { SlashCommandBuilder } = require('@discordjs/builders');
@@ -19,6 +21,15 @@ const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
 rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: commands })
   .then(() => console.log('Successfully registered application commands.'))
   .catch(console.error);
+
+rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, '953880495932964867'), { body: commands })
+  .then(() => console.log('Successfully registered application commands 2.'))
+  .catch(console.error);
+
+//Global
+// rest.put(Routes.applicationCommands(process.env.CLIENT_ID),{ body: commands })
+//   .then(() => console.log('Successfully registered application commands.**'))
+//   .catch(console.error);
 
 
 //Listeners
@@ -67,7 +78,7 @@ https://leetcode.com${response.link}
    timezone: "America/Boise"
  });
 
-
+console.log()
 //Run server listener and bot listener
 listeningServer();
 client.login(process.env.TOKEN);
