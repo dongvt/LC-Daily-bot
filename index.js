@@ -68,10 +68,9 @@ client.on('interactionCreate', async interaction => {
     const channel = client.channels.cache.get(channelId);
     const response = await getDailyChallenge();
     const question = response.question;
-    const msg = `The today's challenge is:\n
-${question.title} [${question.difficulty}] Acceptance: ${question.acRate.toFixed(2)}\n
-https://leetcode.com${response.link}
-`;
+    const msg = `The today's challenge is:
+              ${question.title} [${question.difficulty}] [${question.acRate.toFixed(2)}%]
+              https://leetcode.com${response.link}`;
     channel.send(msg);
  }, {
    scheduled: false,
