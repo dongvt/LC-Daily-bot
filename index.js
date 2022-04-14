@@ -4,15 +4,18 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
-const getDailyChallenge = require('./leetCodeAPI');
-const listeningServer = require('./server');
+const API = require('./api/leetCodeAPI');
+const listeningServer = require('./server/server');
 
-let channelId = null;
+//let channelId = null;
+
+const Channel = require('./database/controllers/channels');
 
 const commands = [
   new SlashCommandBuilder().setName('ping').setDescription('Replies with pong!'),
   new SlashCommandBuilder().setName('lc_begin').setDescription('Sets this channel to the daily challenge'),
-  new SlashCommandBuilder().setName('lc_stop').setDescription('Stops messages')
+  new SlashCommandBuilder().setName('lc_stop').setDescription('Stops messages'),
+  new SlashCommandBuilder().setName('lc_show').setDescription('List the active channels')
 ]
   .map(command => command.toJSON());
 
@@ -36,8 +39,12 @@ rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUIL
 const Discord = require("discord.js");
 const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS] });
 
-client.on('ready', () => {
+client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
+  const channelList = await Channel.getAllChannels();
+  channelList.forEach(channel => {
+    API.dailyTrigger(channel.channelId,client);
+  })
 });
 
 client.on('interactionCreate', async interaction => {
@@ -49,35 +56,27 @@ client.on('interactionCreate', async interaction => {
   if (interaction.commandName === 'lc_begin') {
 
     await interaction.deferReply()
-    channelId = interaction.channelId;
-    const response = await getDailyChallenge();
-    dailyTrigger.start();
+    const channel = client.channels.cache.get(interaction.channelId);
+    Channel.addChannel(channel);
     await interaction.editReply('The daily challenge will be posted at 0:30 UTC');
   }
+
   if (interaction.commandName === 'lc_stop') {
     await interaction.deferReply()
-    dailyTrigger.stop();
+    //dailyTrigger.stop();
     await interaction.editReply('The daily challenge will not longer be posted here');
   }
+
+  if (interaction.commandName === 'lc_show') {
+    await interaction.deferReply();
+    const channelList = await Channel.getAllChannels();
+    const message = ['Active Channel List:\n'];
+    channelList.forEach(channel => {
+      message.push(`#${channel.channelName}\n`);
+    });
+    await interaction.editReply(message.join(' '));
+  }
 });
-
-//Cron temp
- var cron = require('node-cron');
-
- const dailyTrigger = cron.schedule('30 18 * * *', async () => {
-    const channel = client.channels.cache.get(channelId);
-    const response = await getDailyChallenge();
-    const question = response.question;
-    const msg = `The today's challenge is:
-              ${question.title} [${question.difficulty}] [${question.acRate.toFixed(2)}%]
-              https://leetcode.com${response.link}`;
-    channel.send(msg);
- }, {
-   scheduled: false,
-   timezone: "America/Boise"
- });
-
-console.log()
 //Run server listener and bot listener
 
 client.login(process.env.TOKEN);
