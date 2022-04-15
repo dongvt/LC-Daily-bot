@@ -7,10 +7,10 @@ To stop the daily message use `/lc_stop` in any channel
 If the `/lc_begin` command is used in any other channel, the current channel then is overwritten with the new channel.
 
 ## Issues to be solved
-- [ ] Use a database to store active channels
+- [x] Use a database to store active channels
 - [ ] Create a `/lc_stop` to stop the daily challenge in the channel where command is used.
-- [ ] Use Kaffeine to keep the bot active most of the day
-- [ ] Change the folder structure since we are using databases/servers/discordjs 
+- [x] Use Kaffeine to keep the bot active most of the day
+- [x] Change the folder structure since we are using databases/servers/discordjs 
 
 ## Check List
 - [x] Use the discord API to post messages in a channel
@@ -20,10 +20,13 @@ If the `/lc_begin` command is used in any other channel, the current channel the
 - [x] Create some sort of commands namely / commands to configure the bot
 - [x] The configuration shall allow the administrator to tell the bot where to post the daily challenge
 - [x] The configuration shall allow the administrator to disable the daily posts
-- [ ] Multiple channels configuration
-- [ ] Multiple servers configuration
+- [x] Multiple channels configuration
+- [x] Multiple servers configuration
+  - [ ] Modify the `/lc_show` command to show the channel related just to that server
 - [ ] Elevated privilege allowance
+  - [ ] Allow just administrators to use commands
 - [ ] New commands:
   - [ ] `/lc_current` to pull the active daily challenge
-  - [ ] `/lc_channel` to know in which channel is going on the daily posting
+  - [x] `/lc_show` to know in which channel is going on the daily posting
   - [ ] `/lc_random [Level] [Topic]` to pull a random question
+- [ ] Create an `index.html` file to show instead of the current server running one.
