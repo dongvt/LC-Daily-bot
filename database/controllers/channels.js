@@ -1,3 +1,4 @@
+const { CategoryChannel } = require('discord.js');
 const Channel = require('../schema/channels');
 
 exports.addChannel = (channel) =>{
@@ -9,8 +10,15 @@ exports.addChannel = (channel) =>{
     newChannel.save();
 }
 
-exports.deleteChannel = () => {
-
+exports.deleteChannel = async (id) => {
+    
+    try {
+        await Channel.findOneAndRemove({channelId: id});
+        return true;
+    } catch(e) {
+        return false;
+    }
+    
 }
 
 exports.getAllChannels = async () => {

@@ -1,8 +1,7 @@
 "use strict";
 
 const fetch = require("cross-fetch");
-const cron = require('node-cron');
-
+const cron = require("node-cron");
 
 const API = "http://leetcode.com/graphql";
 
@@ -49,18 +48,29 @@ const getDailyChallenge = async () => {
     .catch((err) => console.log(err));
 };
 
-exports.dailyTrigger = (channelId,client) => {
-  cron.schedule('30 18 * * *', async () => {
-    const channel = client.channels.cache.get(channelId);
-    console.log(channel);
-    const response = await getDailyChallenge();
-    const question = response.question;
-    const msg = `The today's challenge is:`
-              + `\n${question.title} [${question.difficulty}] [${question.acRate.toFixed(2)}%]`
-              + `\nhttps://leetcode.com${response.link}`;
-    channel.send(msg);
- }, {
-   scheduled: true,
-   timezone: "America/Boise"
- });
+const writeDailyChallenge = async (channelId, client) => {
+  const channel = client.channels.cache.get(channelId);
+  //console.log(channel);
+  const response = await getDailyChallenge();
+  const question = response.question;
+  const msg =
+    `The today's challenge is:` +
+    `\n${question.title} [${question.difficulty}] [${question.acRate.toFixed(
+      2
+    )}%]` +
+    `\nhttps://leetcode.com${response.link}`;
+  channel.send(msg);
 };
+
+exports.dailyTrigger = (channelId, client) => {
+  cron.schedule(
+    "30 18 * * *",
+    writeDailyChallenge.bind(this, channelId, client),
+    {
+      scheduled: true,
+      timezone: "America/Boise",
+    }
+  );
+};
+
+exports.writeDailyChallenge = writeDailyChallenge;

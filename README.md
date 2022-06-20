@@ -11,13 +11,13 @@ To stop the daily message use `/lc_stop` in any channel
 - The bot uses [Cron](https://www.npmjs.com/package/node-cron) to send the daily challenge to the channels listed in a [MongoDB](https://www.mongodb.com/) database at an specific time everyday.
 - The configured commands are merely to save/delete/retrieve information from the database
 
-- The bot is dead itself if there is not a server running 24/7. The solution here was to use [Heroku](https://www.heroku.com/). Heroku stops its free services each 30 minutes. So, [Kaffeine](https://kaffeine.herokuapp.com/) is used to ping the server each 30 minutes. However, Heroku requires all its free pages to be offline at least 6 hours a day. Thus, the bot is dead at least 6 hours each day.
+- The bot is dead itself if there is not a server running 24/7. The solution here was to use [Heroku](https://www.heroku.com/). Heroku stops its free services each 30 minutes. So, [Kaffeine](https://kaffeine.herokuapp.com/) is used to ping the server each 30 minutes. However, Heroku requires all its free pages to be offline at least 6 hours a day. Therefore, the bot is dead at least 6 hours each day.
 
 - Express is used to actually create the server and run the bot.
 
 ## Issues to be solved
 - [x] Use a database to store active channels
-- [ ] Create a `/lc_stop` to stop the daily challenge in the channel where command is used.
+- [x] Create a `/lc_stop` to stop the daily challenge in the channel where command is used.
 - [x] Use Kaffeine to keep the bot active most of the day
 - [x] Change the folder structure since we are using databases | servers | discordjs 
 
