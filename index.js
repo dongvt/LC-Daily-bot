@@ -3,11 +3,12 @@ require('dotenv').config()
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const mongoose = require('mongoose');
 
 const API = require('./api/leetCodeAPI');
-const listeningServer = require('./server/server');
 
 const Channel = require('./database/controllers/channels');
+const MONGO_URL = process.env.MONGODB_LOCAL;
 
 const commands = [
   new SlashCommandBuilder().setName('lc_begin').setDescription('Sets this channel to the daily challenge'),
@@ -41,6 +42,7 @@ client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
   const channelList = await Channel.getAllChannels();
   channelList.forEach(channel => {
+    
     API.dailyTrigger(channel.channelId,client);
   })
 });
@@ -80,7 +82,22 @@ client.on('interactionCreate', async interaction => {
     await interaction.editReply(message.join(''));
   }
 });
-//Run server listener and bot listener
 
-client.login(process.env.TOKEN);
-//listeningServer();
+
+const mongooseOptions = {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  // useCreateIndex: true,
+  // useFindAndModify: false,
+  family: 4,
+};
+
+mongoose
+  .connect(MONGO_URL, mongooseOptions)
+  .then((result) => {
+    client.login(process.env.TOKEN);
+    
+    
+  })
+  .catch((err) => console.log(err));
+
